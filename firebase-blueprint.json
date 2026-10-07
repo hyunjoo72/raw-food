@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Auth UID" },
+        "displayName": { "type": "string", "description": "User's full name" },
+        "email": { "type": "string", "description": "User's email" },
+        "createdAt": { "type": "string", "description": "Account registration time" }
+      },
+      "required": ["uid", "displayName", "email", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase order for saengsik product",
+      "type": "object",
+      "properties": {
+        "orderNumber": {
+          "type": "string",
+          "description": "Readable order identifier"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Authenticated user or anonymous client ID"
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Full name of the purchaser"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact phone number"
+        },
+        "address": {
+          "type": "string",
+          "description": "Primary delivery street address"
+        },
+        "addressDetail": {
+          "type": "string",
+          "description": "Detailed apartment/suite/room number"
+        },
+        "note": {
+          "type": "string",
+          "description": "Delivery instructions note"
+        },
+        "packageKey": {
+          "type": "string",
+          "description": "Selected product package key"
+        },
+        "packageName": {
+          "type": "string",
+          "description": "Title of the selected package"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Number of packages ordered"
+        },
+        "totalPrice": {
+          "type": "number",
+          "description": "Total payment amount in KRW"
+        },
+        "status": {
+          "type": "string",
+          "description": "Current status of the order"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "Payment method chosen"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp of order placement"
+        }
+      },
+      "required": [
+        "orderNumber",
+        "userId",
+        "customerName",
+        "phone",
+        "address",
+        "packageKey",
+        "packageName",
+        "quantity",
+        "totalPrice",
+        "status",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Registered user profile records"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer orders collection"
+    }
+  }
+}

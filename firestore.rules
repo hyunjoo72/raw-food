@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll([
+        'orderNumber', 'userId', 'customerName', 'phone', 
+        'address', 'packageKey', 'packageName', 
+        'quantity', 'totalPrice', 'status', 'createdAt'
+      ]) &&
+      data.userId is string &&
+      data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 100 &&
+      data.phone is string && data.phone.size() >= 7 && data.phone.size() <= 30 &&
+      data.address is string && data.address.size() > 0 && data.address.size() <= 300 &&
+      data.quantity is number && data.quantity > 0 &&
+      data.totalPrice is number && data.totalPrice > 0 &&
+      data.status is string && data.status.size() <= 50;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || resource.data.uid == request.auth.uid);
+    }
+
+    match /orders/{orderId} {
+      allow create: if isSignedIn() && 
+                    request.resource.data.userId == request.auth.uid &&
+                    isValidOrder(request.resource.data);
+
+      allow read: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
+
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
